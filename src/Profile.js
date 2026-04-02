@@ -66,11 +66,7 @@ export default function Profile() {
       icon: Banknote,
       color: "emerald",
       title: "Vay Tiền Mặt",
-      shortDesc: [
-        "Hạn mức tới 100 triệu",
-        "CCCD gắn chip",
-        "Bảng lãi chi tiết",
-      ],
+      shortDesc: ["Hạn mức 100 triệu", "CCCD gắn chip", "Lãi suất siêu tốt"],
       fullDetails: {
         subtitle: "Giải pháp tài chính siêu tốc cho mọi nhu cầu",
         points: [
@@ -89,11 +85,11 @@ export default function Profile() {
       title: "Thẻ JCB PLUS",
       subtitle: "Đặc quyền 5 KHÔNG:",
       shortDesc: [
-        "KHÔNG phí thường niên trọn đời",
-        "KHÔNG phí rút tiền mặt tại ATM",
-        "KHÔNG chờ thẻ vật lý (Dùng ngay)",
-        "KHÔNG giấy tờ (Chỉ cần CCCD)",
-        "KHÔNG giới hạn ưu đãi (Hoàn tiền 1%)",
+        "KHÔNG thường niên",
+        "KHÔNG phí rút ATM",
+        "KHÔNG chờ thẻ cứng",
+        "KHÔNG giấy tờ",
+        "KHÔNG giới hạn ưu đãi",
       ],
       fullDetails: {
         subtitle: "Chi tiêu trước - Trả sau miễn phí",
@@ -112,11 +108,7 @@ export default function Profile() {
       icon: Bike,
       color: "orange",
       title: "Góp Xe Máy",
-      shortDesc: [
-        "Trả trước từ 20%",
-        "Nhận ngay Cà vẹt gốc",
-        "Duyệt nhanh 15 phút",
-      ],
+      shortDesc: ["Trả trước từ 20%", "Nhận Cà vẹt gốc", "Duyệt nhanh 15p"],
       fullDetails: {
         subtitle: "Rước xế yêu về nhà - Không lo tài chính",
         points: [
@@ -133,11 +125,7 @@ export default function Profile() {
       icon: Smartphone,
       color: "purple",
       title: "Góp Điện Thoại",
-      shortDesc: [
-        "Lãi suất 0.99%",
-        "iPhone, Samsung, Laptop...",
-        "Duyệt hồ sơ siêu tốc",
-      ],
+      shortDesc: ["Lãi suất 0.99%", "iPhone, Samsung..", "Duyệt siêu tốc"],
       fullDetails: {
         subtitle: "Sở hữu đồ công nghệ xịn với chi phí nhỏ",
         points: [
@@ -153,6 +141,7 @@ export default function Profile() {
 
   return (
     <div className="min-h-screen bg-slate-100 font-sans text-slate-800 pb-28 md:pb-12 selection:bg-emerald-200 relative">
+      {/* NỀN ĐỈNH TRANG */}
       <div className="absolute top-0 left-0 w-full h-[40vh] md:h-[45vh] bg-gradient-to-br from-emerald-600 via-teal-700 to-sky-800 z-0 overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
         <div className="absolute inset-0 flex items-start justify-center pt-10 md:pt-20 opacity-[0.03] select-none pointer-events-none">
@@ -163,7 +152,7 @@ export default function Profile() {
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pt-20 sm:pt-32 relative z-10 flex flex-col md:flex-row gap-6 lg:gap-8">
-        {/* CỘT TRÁI */}
+        {/* CỘT TRÁI: PROFILE CARD */}
         <div className="w-full md:w-[35%] lg:w-[30%] shrink-0">
           <div className="bg-white rounded-3xl shadow-xl border border-slate-100 overflow-hidden md:sticky md:top-8">
             <div className="h-28 bg-gradient-to-r from-emerald-400 to-teal-500 relative">
@@ -216,7 +205,6 @@ export default function Profile() {
                 >
                   <Facebook size={18} />
                 </a>
-                {/* ĐÃ FIX LINK GMAIL TRỰC TIẾP Ở ĐÂY */}
                 <a
                   href={`https://mail.google.com/mail/?view=cm&fs=1&to=${personalInfo.email}`}
                   target="_blank"
@@ -248,7 +236,7 @@ export default function Profile() {
         </div>
 
         {/* CỘT PHẢI */}
-        <div className="w-full md:w-[65%] lg:w-[70%] space-y-8">
+        <div className="w-full md:w-[65%] lg:w-[70%] space-y-7 md:space-y-8">
           <div className="grid grid-cols-4 gap-3 md:hidden">
             {[
               {
@@ -269,7 +257,6 @@ export default function Profile() {
                 color: "indigo",
                 href: personalInfo.facebook,
               },
-              // ĐÃ FIX LINK GMAIL TRỰC TIẾP Ở ĐÂY CHO MOBILE
               {
                 icon: Mail,
                 label: "Email",
@@ -296,42 +283,51 @@ export default function Profile() {
             ))}
           </div>
 
-          {/* DỊCH VỤ NỔI BẬT */}
+          {/* ====================================
+              DỊCH VỤ NỔI BẬT (Đã fix 2 cột Mobile)
+          ==================================== */}
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-5 flex items-center gap-2 md:text-white drop-shadow-md">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2 md:text-white drop-shadow-md">
               <Star className="text-amber-400 fill-amber-400" size={24} /> Dịch
               Vụ Nổi Bật
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 lg:gap-6">
+
+            {/* Lưới 2 Cột trên Mobile (grid-cols-2), 2 cột trên Tablet (sm:grid-cols-2) */}
+            <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:gap-6">
               {servicesData.map((item, index) => (
                 <div
                   key={index}
                   onClick={() => setSelectedService(item)}
-                  className="bg-white p-5 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 group transition-all hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col relative overflow-hidden"
+                  className="bg-white p-3 sm:p-5 rounded-2xl sm:rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 group transition-all hover:-translate-y-1 hover:shadow-xl cursor-pointer flex flex-col relative overflow-hidden"
                 >
-                  <div className="flex items-center gap-3 mb-3 relative z-10">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 mb-2 sm:mb-3 relative z-10">
                     <div
-                      className={`p-3 bg-${item.color}-50 text-${item.color}-600 rounded-2xl group-hover:scale-110 transition-transform`}
+                      className={`p-2.5 sm:p-3 bg-${item.color}-50 text-${item.color}-600 rounded-xl sm:rounded-2xl w-fit group-hover:scale-110 transition-transform`}
                     >
-                      <item.icon size={26} strokeWidth={2} />
+                      <item.icon
+                        className="w-5 h-5 sm:w-[26px] sm:h-[26px]"
+                        strokeWidth={2}
+                      />
                     </div>
-                    <h3 className="font-bold text-slate-800 text-lg group-hover:text-emerald-600 transition-colors">
+                    <h3 className="font-bold text-slate-800 text-[13px] sm:text-lg group-hover:text-emerald-600 transition-colors leading-tight">
                       {item.title}
                     </h3>
                   </div>
 
                   {item.subtitle && (
-                    <p className="text-xs font-bold text-rose-500 mb-2.5 uppercase tracking-wide relative z-10">
+                    <p className="text-[9px] sm:text-xs font-bold text-rose-500 mb-1.5 sm:mb-2.5 uppercase tracking-wide relative z-10 line-clamp-1">
                       {item.subtitle}
                     </p>
                   )}
 
-                  <ul className="text-sm text-slate-600 space-y-2.5 font-medium flex-1 relative z-10">
+                  <ul className="text-[10.5px] sm:text-sm text-slate-600 space-y-1.5 sm:space-y-2.5 font-medium flex-1 relative z-10">
                     {item.shortDesc.map((d, dIndex) => (
-                      <li key={dIndex} className="flex items-start gap-2">
+                      <li
+                        key={dIndex}
+                        className="flex items-start gap-1.5 sm:gap-2 leading-snug"
+                      >
                         <CheckCircle2
-                          size={18}
-                          className={`text-${item.color}-500 shrink-0`}
+                          className={`w-3.5 h-3.5 sm:w-[18px] sm:h-[18px] text-${item.color}-500 shrink-0`}
                         />
                         <span
                           dangerouslySetInnerHTML={{
@@ -345,9 +341,9 @@ export default function Profile() {
                     ))}
                   </ul>
 
-                  <div className="mt-4 pt-3 border-t border-slate-50 flex items-center justify-between text-xs font-bold text-slate-400 group-hover:text-emerald-500 transition-colors relative z-10">
-                    <span>Xem chi tiết quyền lợi</span>
-                    <Info size={14} />
+                  <div className="mt-3 pt-2 sm:mt-4 sm:pt-3 border-t border-slate-50 flex items-center justify-between text-[9px] sm:text-xs font-bold text-slate-400 group-hover:text-emerald-500 transition-colors relative z-10">
+                    <span className="truncate pr-1">Xem chi tiết</span>
+                    <Info className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
                   </div>
                 </div>
               ))}
@@ -356,7 +352,7 @@ export default function Profile() {
 
           {/* TUYỂN CTV */}
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-5 flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2">
               <Megaphone className="text-rose-500 fill-rose-500/20" size={24} />{" "}
               Tuyển CTV Online
             </h2>
@@ -366,41 +362,44 @@ export default function Profile() {
               </div>
 
               <div className="relative z-10">
-                <div className="inline-block bg-rose-500 text-white font-black px-4 py-1.5 rounded-full text-sm mb-4 shadow-md animate-pulse uppercase tracking-wider">
+                <div className="inline-block bg-rose-500 text-white font-black px-4 py-1.5 rounded-full text-[11px] sm:text-sm mb-4 shadow-md animate-pulse uppercase tracking-wider">
                   🔥 TÌM ĐỒNG ĐỘI KIẾM TIỀN
                 </div>
 
-                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mb-6 leading-snug">
+                <h3 className="text-xl sm:text-2xl font-black text-slate-800 mb-5 sm:mb-6 leading-snug">
                   Việc Nhẹ Lương Cao - Thu Nhập Không Giới Hạn
                 </h3>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 mb-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 mb-5 sm:mb-6">
                   <div className="bg-white/80 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-orange-100 shadow-sm">
-                    <h4 className="font-bold text-orange-600 flex items-center gap-2 mb-3 text-base sm:text-lg">
-                      <DollarSign size={20} /> Quyền Lợi "Khủng"
+                    <h4 className="font-bold text-orange-600 flex items-center gap-2 mb-2 sm:mb-3 text-sm sm:text-lg">
+                      <DollarSign size={18} className="sm:w-5 sm:h-5" /> Quyền
+                      Lợi "Khủng"
                     </h4>
-                    <ul className="text-sm text-slate-700 space-y-3 font-medium">
+                    <ul className="text-[12px] sm:text-sm text-slate-700 space-y-2 sm:space-y-3 font-medium">
                       <li className="flex items-start gap-2">
                         <CheckCircle2
-                          size={18}
+                          size={16}
                           className="text-orange-500 shrink-0"
                         />{" "}
                         Hoa hồng{" "}
-                        <strong className="text-rose-600 text-base">1%</strong>{" "}
+                        <strong className="text-rose-600 text-[13px] sm:text-base">
+                          1%
+                        </strong>{" "}
                         trên tổng giải ngân
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2
-                          size={18}
+                          size={16}
                           className="text-orange-500 shrink-0"
                         />{" "}
-                        <span className="bg-orange-100 text-orange-800 px-2 py-0.5 rounded">
+                        <span className="bg-orange-100 text-orange-800 px-1.5 sm:px-2 py-0.5 rounded">
                           VD: Vay 50 triệu → Nhận ngay 500K
                         </span>
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2
-                          size={18}
+                          size={16}
                           className="text-orange-500 shrink-0"
                         />{" "}
                         Làm càng nhiều, tiền "ting ting" càng đều
@@ -409,32 +408,33 @@ export default function Profile() {
                   </div>
 
                   <div className="bg-white/80 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-orange-100 shadow-sm">
-                    <h4 className="font-bold text-orange-600 flex items-center gap-2 mb-3 text-base sm:text-lg">
-                      <Users size={20} /> Nhiệm Vụ Rất Dễ
+                    <h4 className="font-bold text-orange-600 flex items-center gap-2 mb-2 sm:mb-3 text-sm sm:text-lg">
+                      <Users size={18} className="sm:w-5 sm:h-5" /> Nhiệm Vụ Rất
+                      Dễ
                     </h4>
-                    <ul className="text-sm text-slate-700 space-y-3 font-medium">
+                    <ul className="text-[12px] sm:text-sm text-slate-700 space-y-2 sm:space-y-3 font-medium">
                       <li className="flex items-start gap-2">
                         <CheckCircle2
-                          size={18}
+                          size={16}
                           className="text-orange-500 shrink-0"
                         />{" "}
                         Điện thoại có mạng là làm được
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2
-                          size={18}
+                          size={16}
                           className="text-orange-500 shrink-0"
                         />{" "}
                         Có sẵn ảnh & bài để đăng FB, Zalo
                       </li>
                       <li className="flex items-start gap-2">
                         <CheckCircle2
-                          size={18}
+                          size={16}
                           className="text-orange-500 shrink-0"
                         />{" "}
                         Chỉ việc đưa số khách.{" "}
                         <strong className="text-rose-600">
-                          Tư vấn & Hồ sơ để Tới lo!
+                          Hồ sơ để Tới lo!
                         </strong>
                       </li>
                     </ul>
@@ -445,9 +445,10 @@ export default function Profile() {
                   href={personalInfo.zalo}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-orange-500/40 w-full sm:w-fit text-base"
+                  className="flex items-center justify-center gap-2 bg-gradient-to-r from-orange-500 to-rose-500 hover:from-orange-600 hover:to-rose-600 text-white font-bold py-3.5 px-8 rounded-xl transition-all shadow-lg shadow-orange-500/40 w-full sm:w-fit text-sm sm:text-base"
                 >
-                  <MessageCircle size={20} /> Inbox Zalo Ứng Tuyển Ngay
+                  <MessageCircle size={18} className="sm:w-5 sm:h-5" /> Inbox
+                  Zalo Ứng Tuyển Ngay
                 </a>
               </div>
             </div>
@@ -455,7 +456,7 @@ export default function Profile() {
 
           {/* TÀI LIỆU & BẢNG LÃI */}
           <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-5 flex items-center gap-2">
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2">
               <FileText className="text-emerald-500" size={24} /> Bảng Lãi &
               Chính Sách
             </h2>
@@ -464,38 +465,45 @@ export default function Profile() {
                 <div
                   key={doc.id}
                   onClick={() => setViewingImage(doc.url)}
-                  className="flex items-center justify-between p-4 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-emerald-50 hover:border-emerald-100 transition-all group shadow-sm hover:shadow"
+                  className="flex items-center justify-between p-3.5 sm:p-4 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-emerald-50 hover:border-emerald-100 transition-all group shadow-sm hover:shadow"
                 >
-                  <div className="flex items-center gap-4 flex-1 min-w-0">
-                    <div className="p-2.5 bg-white text-emerald-600 rounded-xl shadow-sm shrink-0 group-hover:scale-110 transition-transform">
-                      <FileText size={20} strokeWidth={2.5} />
+                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
+                    <div className="p-2 sm:p-2.5 bg-white text-emerald-600 rounded-xl shadow-sm shrink-0 group-hover:scale-110 transition-transform">
+                      <FileText
+                        className="w-5 h-5 sm:w-5 sm:h-5"
+                        strokeWidth={2.5}
+                      />
                     </div>
                     <p className="text-sm sm:text-base font-bold text-slate-800 truncate group-hover:text-emerald-700 transition-colors">
                       {doc.name}
                     </p>
                   </div>
-                  <div className="flex items-center gap-1.5 text-xs sm:text-sm text-emerald-600 font-bold shrink-0 ml-3 bg-emerald-100/50 px-3 py-1.5 rounded-lg group-hover:bg-emerald-200 transition-colors">
-                    <Eye size={16} />{" "}
+                  <div className="flex items-center gap-1.5 text-[10px] sm:text-sm text-emerald-600 font-bold shrink-0 ml-2 sm:ml-3 bg-emerald-100/50 px-2 sm:px-3 py-1.5 rounded-lg group-hover:bg-emerald-200 transition-colors">
+                    <Eye size={14} className="sm:w-4 sm:h-4" />{" "}
                     <span className="hidden sm:inline">Bấm xem</span>
                     <span className="sm:hidden">Xem</span>
                   </div>
                 </div>
               ))}
-              <p className="text-center text-[12px] sm:text-sm text-slate-400 pt-3 italic font-medium">
-                *Bấm vào từng mục để xem ảnh chi tiết.
+              <p className="text-center text-[11px] sm:text-sm text-slate-400 pt-2 sm:pt-3 italic font-medium">
+                *Bấm vào từng mục để xem chi tiết.
               </p>
             </div>
           </div>
 
-          {/* CAM KẾT */}
-          <div className="bg-slate-900 text-white rounded-3xl p-6 sm:p-8 shadow-2xl relative overflow-hidden mb-10">
+          {/* ====================================
+              CAM KẾT LÀM VIỆC (Đã fix UI đẹp cho Mobile)
+          ==================================== */}
+          <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden mb-10">
             <div className="absolute -top-10 -right-10 w-48 h-48 bg-emerald-500 rounded-full filter blur-[80px] opacity-40"></div>
             <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-blue-500 rounded-full filter blur-[80px] opacity-20"></div>
-            <h2 className="text-xl font-bold mb-6 relative z-10 flex items-center gap-2">
-              <ShieldCheck className="text-emerald-400" size={26} /> Cam Kết Làm
+
+            <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 relative z-10 flex items-center gap-2">
+              <ShieldCheck className="text-emerald-400" size={24} /> Cam Kết Làm
               Việc
             </h2>
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 relative z-10">
+
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 relative z-10">
               {[
                 {
                   icon: Clock,
@@ -513,15 +521,21 @@ export default function Profile() {
                   desc: "Đúng lãi suất, không phí ẩn bậy bạ.",
                 },
               ].map((camket, index) => (
-                <div key={index} className="flex flex-col gap-2">
-                  <camket.icon
-                    className="text-emerald-400 shrink-0"
-                    size={24}
-                  />
-                  <h4 className="font-bold text-base">{camket.title}</h4>
-                  <p className="text-sm text-slate-300 leading-relaxed">
-                    {camket.desc}
-                  </p>
+                <div
+                  key={index}
+                  className="flex flex-row sm:flex-col items-center sm:items-start gap-3 sm:gap-2 bg-white/5 sm:bg-transparent p-3 sm:p-0 rounded-2xl border border-white/10 sm:border-none"
+                >
+                  <div className="p-2 sm:p-0 bg-emerald-500/20 sm:bg-transparent rounded-xl shrink-0">
+                    <camket.icon className="text-emerald-400 w-5 h-5 sm:w-6 sm:h-6" />
+                  </div>
+                  <div className="flex-1">
+                    <h4 className="font-bold text-[13px] sm:text-base text-white">
+                      {camket.title}
+                    </h4>
+                    <p className="text-[11px] sm:text-sm text-slate-300 leading-relaxed mt-0.5 sm:mt-1">
+                      {camket.desc}
+                    </p>
+                  </div>
                 </div>
               ))}
             </div>
@@ -606,12 +620,12 @@ export default function Profile() {
                 ))}
               </ul>
             </div>
-            <div className="p-5 border-t border-slate-100 bg-slate-50">
+            <div className="p-4 sm:p-5 border-t border-slate-100 bg-slate-50">
               <a
                 href={personalInfo.zalo}
                 target="_blank"
                 rel="noreferrer"
-                className={`w-full bg-${selectedService.color}-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-${selectedService.color}-600 transition-colors shadow-lg shadow-${selectedService.color}-500/30`}
+                className={`w-full bg-${selectedService.color}-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-${selectedService.color}-600 transition-colors shadow-lg shadow-${selectedService.color}-500/30 text-sm sm:text-base`}
               >
                 <MessageCircle size={20} /> Đăng ký tư vấn ngay
               </a>
