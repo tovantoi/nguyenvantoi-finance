@@ -117,10 +117,13 @@ export default function Profile() {
       formData.append("message", userMsg);
       formData.append("user_id", "1"); // Truyền ID ảo cho người dùng vãng lai
 
-      const response = await fetch("https://chatbot-fe-vantoi.onrender.com", {
-        method: "POST",
-        body: formData,
-      });
+      const response = await fetch(
+        "https://chatbot-fe-vantoi.onrender.com/api/chat",
+        {
+          method: "POST",
+          body: formData,
+        },
+      );
 
       const data = await response.json();
 
