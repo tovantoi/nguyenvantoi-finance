@@ -1,5 +1,5 @@
 // src/Profile.js
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   PhoneCall,
   MessageCircle,
@@ -22,6 +22,12 @@ import {
   Users,
   DollarSign,
   Info,
+  ThumbsUp,
+  HelpCircle,
+  ChevronDown,
+  ArrowUp,
+  BadgeCheck,
+  ChevronUp,
 } from "lucide-react";
 
 export default function Profile() {
@@ -41,6 +47,50 @@ export default function Profile() {
 
   const [viewingImage, setViewingImage] = useState(null);
   const [selectedService, setSelectedService] = useState(null);
+  const [openFaq, setOpenFaq] = useState(null);
+  const [showTopBtn, setShowTopBtn] = useState(false);
+
+  // Tham chiếu đến khung chứa Slide Khách Hàng
+  const sliderRef = useRef(null);
+
+  // Xử lý hiện/ẩn nút Lên đầu trang
+  useEffect(() => {
+    const handleScroll = () => {
+      if (window.scrollY > 400) {
+        setShowTopBtn(true);
+      } else {
+        setShowTopBtn(false);
+      }
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  // Xử lý Auto-play cho Slide Khách hàng (Tự động lướt)
+  useEffect(() => {
+    const slideInterval = setInterval(() => {
+      if (sliderRef.current) {
+        const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
+
+        // Nếu cuộn đến cuối cùng (cộng trừ hao 10px) thì quay lại thẻ đầu tiên
+        if (scrollLeft + clientWidth >= scrollWidth - 10) {
+          sliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
+        } else {
+          // Cuộn sang phải 1 khoảng bằng 300px (xấp xỉ 1 thẻ)
+          sliderRef.current.scrollBy({ left: 300, behavior: "smooth" });
+        }
+      }
+    }, 3000); // 3000ms = 3 giây lướt 1 lần
+
+    return () => clearInterval(slideInterval); // Dọn dẹp interval khi component unmount
+  }, []);
+
+  const goToTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: "smooth",
+    });
+  };
 
   const documentImages = [
     {
@@ -60,6 +110,56 @@ export default function Profile() {
     },
   ];
 
+  const successStories = [
+    {
+      id: 1,
+      customer: "Nguyễn Thị H***",
+      amount: "50.000.000đ",
+      date: "Thứ Hai, 16/03/2026",
+      time: "13:06",
+      desc: "Giải ngân gói Vay Tiền Mặt.",
+    },
+    {
+      id: 2,
+      customer: "Trần Văn T***",
+      amount: "30.000.000đ",
+      date: "14/04/2026",
+      time: "13:15",
+      desc: "Mở thẻ JCB PLUS thành công.",
+    },
+    {
+      id: 3,
+      customer: "Lê Văn D***",
+      amount: "45.000.000đ",
+      date: "19/04/2026",
+      time: "09:30",
+      desc: "Duyệt hồ sơ góp xe máy.",
+    },
+    {
+      id: 4,
+      customer: "Phạm Tấn T***",
+      amount: "70.000.000đ",
+      date: "20/04/2026",
+      time: "15:45",
+      desc: "Giải ngân nhanh vốn kinh doanh.",
+    },
+  ];
+
+  const faqs = [
+    {
+      q: "Tôi đang có nợ xấu thì có vay được không?",
+      a: "Tùy thuộc vào nhóm nợ xấu của bạn. Nếu là nợ chú ý (nhóm 1, 2) đã tất toán, hệ thống vẫn có thể xem xét hỗ trợ. Nợ nhóm 3 trở lên sẽ chưa thể duyệt lúc này.",
+    },
+    {
+      q: "Thẩm định có gọi điện cho người thân không?",
+      a: "Với các gói vay hạn mức nhỏ hoặc điểm tín dụng tốt, hệ thống có thể duyệt tự động mà không cần gọi người thân. Thông tin khoản vay được bảo mật hoàn toàn.",
+    },
+    {
+      q: "Sau khi ký hợp đồng thì bao lâu nhận được tiền?",
+      a: "Ngay sau khi hồ sơ được duyệt và ký hợp đồng điện tử thành công, tiền sẽ được chuyển thẳng vào tài khoản ngân hàng của bạn trong vòng 2 đến 24 giờ.",
+    },
+  ];
+
   const servicesData = [
     {
       id: "vay-tien-mat",
@@ -68,9 +168,11 @@ export default function Profile() {
       title: "Vay Tiền Mặt",
       shortDesc: [
         "Hỗ trợ hạn mức từ 3 - 100 triệu",
+        "Hỗ trợ lên hồ sơ online từ xa",
         "Chỉ cần CCCD gắn chip",
         "Lãi suất siêu tốt - siêu rẻ",
         "Miễn thẩm định khách tốt",
+        "Gặp mặt trực tiếp tỷ lệ duyệt 99%",
       ],
       fullDetails: {
         subtitle: "Giải pháp tài chính siêu tốc cho mọi nhu cầu",
@@ -113,7 +215,12 @@ export default function Profile() {
       icon: Bike,
       color: "orange",
       title: "Góp Xe Máy",
-      shortDesc: ["Trả trước từ 20%", "Nhận Cà vẹt gốc", "Duyệt nhanh 15p"],
+      shortDesc: [
+        "Hỗ trợ các dòng xe máy và đạp điện",
+        "Trả trước từ 20%",
+        "Nhận ngay xe và Cà vẹt gốc",
+        "Duyệt nhanh 15p",
+      ],
       fullDetails: {
         subtitle: "Rước xế yêu về nhà - Không lo tài chính",
         points: [
@@ -130,7 +237,12 @@ export default function Profile() {
       icon: Smartphone,
       color: "purple",
       title: "Góp Điện Thoại",
-      shortDesc: ["Lãi suất 0.99%", "iPhone, Samsung..", "Duyệt siêu tốc"],
+      shortDesc: [
+        "Lãi suất siêu rẻ",
+        "iPhone, Samsung..",
+        "Duyệt siêu tốc",
+        "Khách tốt và khoản vay thấp sẽ được duyệt thẳng",
+      ],
       fullDetails: {
         subtitle: "Sở hữu đồ công nghệ xịn với chi phí nhỏ",
         points: [
@@ -143,24 +255,19 @@ export default function Profile() {
       },
     },
   ];
-  // Map class màu sắc tĩnh cho nút bấm để Tailwind không bị mất màu
+
   const buttonThemes = {
     emerald: "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30",
     blue: "bg-blue-500 hover:bg-blue-600 shadow-blue-500/30",
     orange: "bg-orange-500 hover:bg-orange-600 shadow-orange-500/30",
     purple: "bg-purple-500 hover:bg-purple-600 shadow-purple-500/30",
   };
+
   return (
-    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 pb-28 md:pb-12 selection:bg-emerald-200 relative">
-      {/* Khối div ẩn để ép Tailwind compile TẤT CẢ các class động cho icon, viền, chữ */}
-      <div
-        className="hidden 
-        bg-emerald-50 text-emerald-600 text-emerald-500 border-emerald-100 text-emerald-500/10
-        bg-blue-50 text-blue-600 text-blue-500 border-blue-100 text-blue-500/10
-        bg-orange-50 text-orange-600 text-orange-500 border-orange-100 text-orange-500/10
-        bg-purple-50 text-purple-600 text-purple-500 border-purple-100 text-purple-500/10
-      "
-      ></div>{" "}
+    <div className="min-h-screen bg-slate-100 font-sans text-slate-800 pb-28 md:pb-12 selection:bg-emerald-200 relative scroll-smooth">
+      {/* Khối div ẩn ép Tailwind */}
+      <div className="hidden bg-emerald-50 text-emerald-600 text-emerald-500 border-emerald-100 text-emerald-500/10 bg-blue-50 text-blue-600 text-blue-500 border-blue-100 text-blue-500/10 bg-orange-50 text-orange-600 text-orange-500 border-orange-100 text-orange-500/10 bg-purple-50 text-purple-600 text-purple-500 border-purple-100 text-purple-500/10"></div>
+
       {/* NỀN ĐỈNH TRANG */}
       <div className="absolute top-0 left-0 w-full h-[40vh] md:h-[45vh] bg-gradient-to-br from-emerald-600 via-teal-700 to-sky-800 z-0 overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -170,6 +277,7 @@ export default function Profile() {
           </h1>
         </div>
       </div>
+
       <div className="max-w-6xl mx-auto px-4 pt-20 sm:pt-32 relative z-10 flex flex-col md:flex-row gap-6 lg:gap-8">
         {/* CỘT TRÁI: PROFILE CARD */}
         <div className="w-full md:w-[35%] lg:w-[30%] shrink-0">
@@ -302,16 +410,12 @@ export default function Profile() {
             ))}
           </div>
 
-          {/* ====================================
-              DỊCH VỤ NỔI BẬT (Đã fix 2 cột Mobile)
-          ==================================== */}
+          {/* DỊCH VỤ NỔI BẬT */}
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2 md:text-white drop-shadow-md">
               <Star className="text-amber-400 fill-amber-400" size={24} /> Dịch
               Vụ Nổi Bật
             </h2>
-
-            {/* Lưới 2 Cột trên Mobile (grid-cols-2), 2 cột trên Tablet (sm:grid-cols-2) */}
             <div className="grid grid-cols-2 gap-2.5 sm:gap-4 lg:gap-6">
               {servicesData.map((item, index) => (
                 <div
@@ -332,13 +436,11 @@ export default function Profile() {
                       {item.title}
                     </h3>
                   </div>
-
                   {item.subtitle && (
                     <p className="text-[9px] sm:text-xs font-bold text-rose-500 mb-1.5 sm:mb-2.5 uppercase tracking-wide relative z-10 line-clamp-1">
                       {item.subtitle}
                     </p>
                   )}
-
                   <ul className="text-[10.5px] sm:text-sm text-slate-600 space-y-1.5 sm:space-y-2.5 font-medium flex-1 relative z-10">
                     {item.shortDesc.map((d, dIndex) => (
                       <li
@@ -359,10 +461,52 @@ export default function Profile() {
                       </li>
                     ))}
                   </ul>
-
                   <div className="mt-3 pt-2 sm:mt-4 sm:pt-3 border-t border-slate-50 flex items-center justify-between text-[9px] sm:text-xs font-bold text-slate-400 group-hover:text-emerald-500 transition-colors relative z-10">
                     <span className="truncate pr-1">Xem chi tiết</span>
                     <Info className="w-3 h-3 sm:w-3.5 sm:h-3.5 shrink-0" />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* SOCIAL PROOF: KHÁCH HÀNG GIẢI NGÂN (CÓ SLIDER TỰ ĐỘNG) */}
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2">
+              <ThumbsUp className="text-blue-500" size={24} /> Khách Hàng Gần
+              Đây
+            </h2>
+            {/* Gắn sliderRef vào thanh chứa */}
+            <div
+              ref={sliderRef}
+              className="flex overflow-x-auto gap-4 pb-4 snap-x hide-scrollbar"
+            >
+              {successStories.map((story) => (
+                <div
+                  key={story.id}
+                  className="w-[280px] sm:w-[320px] shrink-0 bg-white p-4 sm:p-5 rounded-2xl border border-slate-100 shadow-sm snap-center"
+                >
+                  <div className="flex justify-between items-start mb-3">
+                    <div className="flex items-center gap-2">
+                      <div className="w-8 h-8 rounded-full bg-emerald-100 text-emerald-600 flex items-center justify-center font-bold">
+                        {story.customer.charAt(0)}
+                      </div>
+                      <div>
+                        <p className="font-bold text-slate-700 text-sm">
+                          {story.customer}
+                        </p>
+                        <div className="flex items-center text-[10px] text-slate-400 gap-1 mt-0.5">
+                          <Clock size={10} /> {story.time} - {story.date}
+                        </div>
+                      </div>
+                    </div>
+                    <BadgeCheck className="text-blue-500" size={20} />
+                  </div>
+                  <div className="bg-emerald-50/50 rounded-xl p-3 border border-emerald-50/50">
+                    <p className="text-xs text-slate-500 mb-1">{story.desc}</p>
+                    <p className="font-black text-emerald-600 text-lg">
+                      {story.amount}
+                    </p>
                   </div>
                 </div>
               ))}
@@ -379,16 +523,13 @@ export default function Profile() {
               <div className="absolute -right-10 -top-10 text-orange-400/20 transform rotate-12 group-hover:scale-110 transition-transform duration-500 pointer-events-none">
                 <DollarSign size={200} strokeWidth={3} />
               </div>
-
               <div className="relative z-10">
                 <div className="inline-block bg-rose-500 text-white font-black px-4 py-1.5 rounded-full text-[11px] sm:text-sm mb-4 shadow-md animate-pulse uppercase tracking-wider">
                   🔥 TÌM ĐỒNG ĐỘI KIẾM TIỀN
                 </div>
-
                 <h3 className="text-xl sm:text-2xl font-black text-slate-800 mb-5 sm:mb-6 leading-snug">
                   Việc Nhẹ Lương Cao - Thu Nhập Không Giới Hạn
                 </h3>
-
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-6 mb-5 sm:mb-6">
                   <div className="bg-white/80 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-orange-100 shadow-sm">
                     <h4 className="font-bold text-orange-600 flex items-center gap-2 mb-2 sm:mb-3 text-sm sm:text-lg">
@@ -425,7 +566,6 @@ export default function Profile() {
                       </li>
                     </ul>
                   </div>
-
                   <div className="bg-white/80 backdrop-blur-sm p-4 sm:p-5 rounded-2xl border border-orange-100 shadow-sm">
                     <h4 className="font-bold text-orange-600 flex items-center gap-2 mb-2 sm:mb-3 text-sm sm:text-lg">
                       <Users size={18} className="sm:w-5 sm:h-5" /> Nhiệm Vụ Rất
@@ -459,7 +599,6 @@ export default function Profile() {
                     </ul>
                   </div>
                 </div>
-
                 <a
                   href={personalInfo.zalo}
                   target="_blank"
@@ -510,18 +649,54 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* ====================================
-              CAM KẾT LÀM VIỆC (Đã fix UI đẹp cho Mobile)
-          ==================================== */}
+          {/* FAQ - CÂU HỎI THƯỜNG GẶP */}
+          <div>
+            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2">
+              <HelpCircle className="text-purple-500" size={24} /> Hỏi Đáp Nhanh
+            </h2>
+            <div className="space-y-3">
+              {faqs.map((faq, index) => (
+                <div
+                  key={index}
+                  className="bg-white border border-slate-200 rounded-2xl overflow-hidden transition-all duration-200"
+                >
+                  <button
+                    className="w-full text-left px-5 py-4 flex items-center justify-between font-bold text-slate-700 hover:text-emerald-600 transition-colors focus:outline-none"
+                    onClick={() => setOpenFaq(openFaq === index ? null : index)}
+                  >
+                    <span className="text-sm sm:text-base pr-4">{faq.q}</span>
+                    {openFaq === index ? (
+                      <ChevronUp
+                        size={20}
+                        className="text-emerald-500 shrink-0"
+                      />
+                    ) : (
+                      <ChevronDown
+                        size={20}
+                        className="text-slate-400 shrink-0"
+                      />
+                    )}
+                  </button>
+                  <div
+                    className={`px-5 overflow-hidden transition-all duration-300 ease-in-out ${openFaq === index ? "max-h-40 pb-4 opacity-100" : "max-h-0 opacity-0"}`}
+                  >
+                    <p className="text-slate-600 text-sm leading-relaxed border-t border-slate-100 pt-3">
+                      {faq.a}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* CAM KẾT LÀM VIỆC */}
           <div className="bg-slate-900 text-white rounded-3xl p-5 sm:p-8 shadow-2xl relative overflow-hidden mb-10">
             <div className="absolute -top-10 -right-10 w-48 h-48 bg-emerald-500 rounded-full filter blur-[80px] opacity-40"></div>
             <div className="absolute -bottom-10 -left-10 w-48 h-48 bg-blue-500 rounded-full filter blur-[80px] opacity-20"></div>
-
             <h2 className="text-lg sm:text-xl font-bold mb-4 sm:mb-6 relative z-10 flex items-center gap-2">
               <ShieldCheck className="text-emerald-400" size={24} /> Cam Kết Làm
               Việc
             </h2>
-
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-6 relative z-10">
               {[
                 {
@@ -561,6 +736,16 @@ export default function Profile() {
           </div>
         </div>
       </div>
+
+      {/* NÚT BACK TO TOP */}
+      <button
+        onClick={goToTop}
+        className={`fixed bottom-24 md:bottom-8 right-4 md:right-8 bg-slate-800 hover:bg-slate-700 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 z-50 ${showTopBtn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"}`}
+        title="Lên đầu trang"
+      >
+        <ArrowUp size={24} />
+      </button>
+
       {/* THANH LIÊN HỆ ĐÁY MÀN HÌNH */}
       <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-slate-200 p-3 z-[40] shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
         <div className="flex gap-3">
@@ -581,6 +766,7 @@ export default function Profile() {
           </a>
         </div>
       </div>
+
       {/* MODAL 1: HIỂN THỊ CHI TIẾT DỊCH VỤ */}
       {selectedService && (
         <div
@@ -650,6 +836,7 @@ export default function Profile() {
           </div>
         </div>
       )}
+
       {/* MODAL 2: PHÓNG TO ẢNH TÀI LIỆU */}
       {viewingImage && (
         <div
@@ -665,6 +852,7 @@ export default function Profile() {
           <img
             src={viewingImage}
             alt="Tài liệu"
+            loading="lazy"
             className="max-w-full max-h-[90vh] object-contain rounded-xl shadow-2xl animate-in zoom-in-90 duration-300"
             onClick={(e) => e.stopPropagation()}
           />
@@ -673,6 +861,21 @@ export default function Profile() {
           </p>
         </div>
       )}
+
+      {/* CSS Ẩn thanh cuộn */}
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+        .hide-scrollbar::-webkit-scrollbar {
+          display: none;
+        }
+        .hide-scrollbar {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `,
+        }}
+      />
     </div>
   );
 }
