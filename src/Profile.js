@@ -33,7 +33,7 @@ export default function Profile() {
       "https://res.cloudinary.com/ddzdect5z/image/upload/v1775140610/avt_rqrmsz.jpg",
     phone: "0359272229",
     zalo: "https://zalo.me/0359272229",
-    facebook: "https://www.facebook.com/share/18GYBNzLZC/",
+    facebook: "https://www.facebook.com/tovantoi.03092003/",
     email: "tovantoi.finance@gmail.com",
     location: "Toàn quốc",
     bio: "Với hơn 3 năm kinh nghiệm tại FE Credit, tôi cam kết mang đến cho khách hàng các giải pháp vay vốn tối ưu, minh bạch về lãi suất và giải ngân nhanh chóng nhất.",
@@ -66,7 +66,12 @@ export default function Profile() {
       icon: Banknote,
       color: "emerald",
       title: "Vay Tiền Mặt",
-      shortDesc: ["Hạn mức 100 triệu", "CCCD gắn chip", "Lãi suất siêu tốt"],
+      shortDesc: [
+        "Hỗ trợ hạn mức từ 3 - 100 triệu",
+        "Chỉ cần CCCD gắn chip",
+        "Lãi suất siêu tốt - siêu rẻ",
+        "Miễn thẩm định khách tốt",
+      ],
       fullDetails: {
         subtitle: "Giải pháp tài chính siêu tốc cho mọi nhu cầu",
         points: [
@@ -138,9 +143,24 @@ export default function Profile() {
       },
     },
   ];
-
+  // Map class màu sắc tĩnh cho nút bấm để Tailwind không bị mất màu
+  const buttonThemes = {
+    emerald: "bg-emerald-500 hover:bg-emerald-600 shadow-emerald-500/30",
+    blue: "bg-blue-500 hover:bg-blue-600 shadow-blue-500/30",
+    orange: "bg-orange-500 hover:bg-orange-600 shadow-orange-500/30",
+    purple: "bg-purple-500 hover:bg-purple-600 shadow-purple-500/30",
+  };
   return (
     <div className="min-h-screen bg-slate-100 font-sans text-slate-800 pb-28 md:pb-12 selection:bg-emerald-200 relative">
+      {/* Khối div ẩn để ép Tailwind compile TẤT CẢ các class động cho icon, viền, chữ */}
+      <div
+        className="hidden 
+        bg-emerald-50 text-emerald-600 text-emerald-500 border-emerald-100 text-emerald-500/10
+        bg-blue-50 text-blue-600 text-blue-500 border-blue-100 text-blue-500/10
+        bg-orange-50 text-orange-600 text-orange-500 border-orange-100 text-orange-500/10
+        bg-purple-50 text-purple-600 text-purple-500 border-purple-100 text-purple-500/10
+      "
+      ></div>{" "}
       {/* NỀN ĐỈNH TRANG */}
       <div className="absolute top-0 left-0 w-full h-[40vh] md:h-[45vh] bg-gradient-to-br from-emerald-600 via-teal-700 to-sky-800 z-0 overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')]"></div>
@@ -150,7 +170,6 @@ export default function Profile() {
           </h1>
         </div>
       </div>
-
       <div className="max-w-6xl mx-auto px-4 pt-20 sm:pt-32 relative z-10 flex flex-col md:flex-row gap-6 lg:gap-8">
         {/* CỘT TRÁI: PROFILE CARD */}
         <div className="w-full md:w-[35%] lg:w-[30%] shrink-0">
@@ -542,7 +561,6 @@ export default function Profile() {
           </div>
         </div>
       </div>
-
       {/* THANH LIÊN HỆ ĐÁY MÀN HÌNH */}
       <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-slate-200 p-3 z-[40] shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
         <div className="flex gap-3">
@@ -563,7 +581,6 @@ export default function Profile() {
           </a>
         </div>
       </div>
-
       {/* MODAL 1: HIỂN THỊ CHI TIẾT DỊCH VỤ */}
       {selectedService && (
         <div
@@ -625,7 +642,7 @@ export default function Profile() {
                 href={personalInfo.zalo}
                 target="_blank"
                 rel="noreferrer"
-                className={`w-full bg-${selectedService.color}-500 text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 hover:bg-${selectedService.color}-600 transition-colors shadow-lg shadow-${selectedService.color}-500/30 text-sm sm:text-base`}
+                className={`w-full text-white font-bold py-3.5 rounded-xl flex items-center justify-center gap-2 transition-colors shadow-lg text-sm sm:text-base ${buttonThemes[selectedService.color]}`}
               >
                 <MessageCircle size={20} /> Đăng ký tư vấn ngay
               </a>
@@ -633,7 +650,6 @@ export default function Profile() {
           </div>
         </div>
       )}
-
       {/* MODAL 2: PHÓNG TO ẢNH TÀI LIỆU */}
       {viewingImage && (
         <div
