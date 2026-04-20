@@ -28,6 +28,9 @@ import {
   ArrowUp,
   BadgeCheck,
   ChevronUp,
+  Send,
+  Bot,
+  Loader2,
 } from "lucide-react";
 
 export default function Profile() {
@@ -50,46 +53,91 @@ export default function Profile() {
   const [openFaq, setOpenFaq] = useState(null);
   const [showTopBtn, setShowTopBtn] = useState(false);
 
-  // Tham chiếu đến khung chứa Slide Khách Hàng
   const sliderRef = useRef(null);
+  const chatEndRef = useRef(null);
+
+  // --- CÁC STATE CỦA CHATBOT ---
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [inputText, setInputText] = useState("");
+  const [isTyping, setIsTyping] = useState(false);
+  const [chatMessages, setChatMessages] = useState([
+    {
+      role: "bot",
+      text: "Xin chào! Mình là trợ lý AI của anh Tô Văn Tới. Bạn cần hỗ trợ vay vốn hay mở thẻ FE Credit ạ?",
+    },
+  ]);
 
   // Xử lý hiện/ẩn nút Lên đầu trang
   useEffect(() => {
     const handleScroll = () => {
-      if (window.scrollY > 400) {
-        setShowTopBtn(true);
-      } else {
-        setShowTopBtn(false);
-      }
+      setShowTopBtn(window.scrollY > 400);
     };
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  // Xử lý Auto-play cho Slide Khách hàng (Tự động lướt)
+  // Xử lý Auto-play cho Slide Khách hàng
   useEffect(() => {
     const slideInterval = setInterval(() => {
       if (sliderRef.current) {
         const { scrollLeft, scrollWidth, clientWidth } = sliderRef.current;
-
-        // Nếu cuộn đến cuối cùng (cộng trừ hao 10px) thì quay lại thẻ đầu tiên
         if (scrollLeft + clientWidth >= scrollWidth - 10) {
           sliderRef.current.scrollTo({ left: 0, behavior: "smooth" });
         } else {
-          // Cuộn sang phải 1 khoảng bằng 300px (xấp xỉ 1 thẻ)
           sliderRef.current.scrollBy({ left: 300, behavior: "smooth" });
         }
       }
-    }, 3000); // 3000ms = 3 giây lướt 1 lần
-
-    return () => clearInterval(slideInterval); // Dọn dẹp interval khi component unmount
+    }, 3000);
+    return () => clearInterval(slideInterval);
   }, []);
 
+  // Tự động cuộn xuống tin nhắn mới nhất trong Chatbot
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [chatMessages, isTyping]);
+
   const goToTop = () => {
-    window.scrollTo({
-      top: 0,
-      behavior: "smooth",
-    });
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
+  // --- HÀM XỬ LÝ GỬI TIN NHẮN CHATBOT ---
+  const handleSendMessage = async (e) => {
+    e.preventDefault();
+    if (!inputText.trim()) return;
+
+    const userMsg = inputText.trim();
+    // 1. Hiển thị tin nhắn của người dùng lên UI
+    setChatMessages((prev) => [...prev, { role: "user", text: userMsg }]);
+    setInputText("");
+    setIsTyping(true);
+
+    try {
+      // 2. Gửi request xuống API Flask Backend
+      const formData = new FormData();
+      formData.append("message", userMsg);
+      formData.append("user_id", "1"); // Truyền ID ảo cho người dùng vãng lai
+
+      const response = await fetch("https://chatbot-fe-vantoi.onrender.com", {
+        method: "POST",
+        body: formData,
+      });
+
+      const data = await response.json();
+
+      // 3. Nhận phản hồi và hiển thị tin nhắn của Bot
+      setChatMessages((prev) => [...prev, { role: "bot", text: data.reply }]);
+    } catch (error) {
+      console.error("Chat Error:", error);
+      setChatMessages((prev) => [
+        ...prev,
+        {
+          role: "bot",
+          text: "Hệ thống đang bận hoặc mất kết nối. Vui lòng liên hệ trực tiếp Zalo 0359272229 nhé!",
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
   };
 
   const documentImages = [
@@ -168,7 +216,7 @@ export default function Profile() {
       title: "Vay Tiền Mặt",
       shortDesc: [
         "Hỗ trợ hạn mức từ 3 - 100 triệu",
-        "Hỗ trợ lên hồ sơ online từ xa",
+        "Hỗ trợ lên hồ sơ Online từ xa",
         "Chỉ cần CCCD gắn chip",
         "Lãi suất siêu tốt - siêu rẻ",
         "Miễn thẩm định khách tốt",
@@ -470,13 +518,12 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* SOCIAL PROOF: KHÁCH HÀNG GIẢI NGÂN (CÓ SLIDER TỰ ĐỘNG) */}
+          {/* SOCIAL PROOF: KHÁCH HÀNG GIẢI NGÂN */}
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2">
               <ThumbsUp className="text-blue-500" size={24} /> Khách Hàng Gần
               Đây
             </h2>
-            {/* Gắn sliderRef vào thanh chứa */}
             <div
               ref={sliderRef}
               className="flex overflow-x-auto gap-4 pb-4 snap-x hide-scrollbar"
@@ -612,43 +659,6 @@ export default function Profile() {
             </div>
           </div>
 
-          {/* TÀI LIỆU & BẢNG LÃI */}
-          <div>
-            <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2">
-              <FileText className="text-emerald-500" size={24} /> Bảng Lãi &
-              Chính Sách
-            </h2>
-            <div className="bg-white p-4 sm:p-6 rounded-3xl shadow-lg shadow-slate-200/50 border border-slate-100 space-y-3">
-              {documentImages.map((doc) => (
-                <div
-                  key={doc.id}
-                  onClick={() => setViewingImage(doc.url)}
-                  className="flex items-center justify-between p-3.5 sm:p-4 bg-slate-50 border border-slate-100 rounded-2xl cursor-pointer hover:bg-emerald-50 hover:border-emerald-100 transition-all group shadow-sm hover:shadow"
-                >
-                  <div className="flex items-center gap-3 sm:gap-4 flex-1 min-w-0">
-                    <div className="p-2 sm:p-2.5 bg-white text-emerald-600 rounded-xl shadow-sm shrink-0 group-hover:scale-110 transition-transform">
-                      <FileText
-                        className="w-5 h-5 sm:w-5 sm:h-5"
-                        strokeWidth={2.5}
-                      />
-                    </div>
-                    <p className="text-sm sm:text-base font-bold text-slate-800 truncate group-hover:text-emerald-700 transition-colors">
-                      {doc.name}
-                    </p>
-                  </div>
-                  <div className="flex items-center gap-1.5 text-[10px] sm:text-sm text-emerald-600 font-bold shrink-0 ml-2 sm:ml-3 bg-emerald-100/50 px-2 sm:px-3 py-1.5 rounded-lg group-hover:bg-emerald-200 transition-colors">
-                    <Eye size={14} className="sm:w-4 sm:h-4" />{" "}
-                    <span className="hidden sm:inline">Bấm xem</span>
-                    <span className="sm:hidden">Xem</span>
-                  </div>
-                </div>
-              ))}
-              <p className="text-center text-[11px] sm:text-sm text-slate-400 pt-2 sm:pt-3 italic font-medium">
-                *Bấm vào từng mục để xem chi tiết.
-              </p>
-            </div>
-          </div>
-
           {/* FAQ - CÂU HỎI THƯỜNG GẶP */}
           <div>
             <h2 className="text-xl sm:text-2xl font-black text-slate-800 mb-4 sm:mb-5 flex items-center gap-2">
@@ -737,16 +747,103 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* NÚT BACK TO TOP */}
-      <button
-        onClick={goToTop}
-        className={`fixed bottom-24 md:bottom-8 right-4 md:right-8 bg-slate-800 hover:bg-slate-700 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 z-50 ${showTopBtn ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10 pointer-events-none"}`}
-        title="Lên đầu trang"
-      >
-        <ArrowUp size={24} />
-      </button>
+      {/* --- CỤM CHỨA NÚT BACK TO TOP & CHATBOT --- */}
+      <div className="fixed bottom-24 md:bottom-8 right-4 md:right-8 z-50 flex flex-col items-end gap-3">
+        {/* KHUNG CHATBOT NỔI */}
+        <div
+          className={`bg-white w-[300px] sm:w-[350px] rounded-2xl shadow-2xl overflow-hidden border border-slate-200 transition-all duration-300 origin-bottom-right ${isChatOpen ? "scale-100 opacity-100 mb-2" : "scale-0 opacity-0 h-0 m-0 pointer-events-none"}`}
+        >
+          <div className="bg-emerald-500 p-4 flex justify-between items-center text-white">
+            <div className="flex items-center gap-2">
+              <Bot size={24} />
+              <span className="font-bold">Trợ lý Tài chính AI</span>
+            </div>
+            <button
+              onClick={() => setIsChatOpen(false)}
+              className="text-white/80 hover:text-white"
+            >
+              <X size={20} />
+            </button>
+          </div>
 
-      {/* THANH LIÊN HỆ ĐÁY MÀN HÌNH */}
+          <div className="h-[350px] overflow-y-auto p-4 bg-slate-50 flex flex-col gap-3">
+            {chatMessages.map((msg, idx) => (
+              <div
+                key={idx}
+                className={`flex gap-2 ${msg.role === "user" ? "justify-end" : "justify-start"}`}
+              >
+                {msg.role === "bot" && (
+                  <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                    <Bot size={16} />
+                  </div>
+                )}
+                <div
+                  className={`p-3 rounded-2xl text-sm leading-relaxed max-w-[85%] ${msg.role === "user" ? "bg-emerald-500 text-white rounded-br-sm" : "bg-white border border-slate-200 text-slate-700 rounded-bl-sm"}`}
+                >
+                  {msg.text}
+                </div>
+              </div>
+            ))}
+            {isTyping && (
+              <div className="flex gap-2 justify-start">
+                <div className="w-8 h-8 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 shrink-0">
+                  <Bot size={16} />
+                </div>
+                <div className="p-3 bg-white border border-slate-200 rounded-2xl rounded-bl-sm">
+                  <Loader2
+                    size={16}
+                    className="animate-spin text-emerald-500"
+                  />
+                </div>
+              </div>
+            )}
+            <div ref={chatEndRef} />
+          </div>
+
+          <form
+            onSubmit={handleSendMessage}
+            className="p-3 bg-white border-t border-slate-100 flex gap-2"
+          >
+            <input
+              type="text"
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              placeholder="Hỏi AI về lãi suất, hạn mức..."
+              className="flex-1 bg-slate-100 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500/50"
+            />
+            <button
+              type="submit"
+              disabled={isTyping}
+              className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors disabled:opacity-50"
+            >
+              <Send size={18} className={inputText.trim() ? "ml-1" : ""} />
+            </button>
+          </form>
+        </div>
+
+        {/* NÚT BACK TO TOP VÀ NÚT MỞ CHAT */}
+        <div className="flex items-center gap-3">
+          <button
+            onClick={goToTop}
+            className={`bg-slate-800 hover:bg-slate-700 text-white w-12 h-12 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 ${showTopBtn && !isChatOpen ? "opacity-100 scale-100" : "opacity-0 scale-50 pointer-events-none"}`}
+            title="Lên đầu trang"
+          >
+            <ArrowUp size={24} />
+          </button>
+
+          <button
+            onClick={() => setIsChatOpen(!isChatOpen)}
+            className={`w-14 h-14 rounded-full flex items-center justify-center shadow-2xl transition-all duration-300 text-white relative ${isChatOpen ? "bg-rose-500 hover:bg-rose-600 rotate-90" : "bg-emerald-500 hover:bg-emerald-600 animate-bounce"}`}
+          >
+            {isChatOpen ? <X size={28} /> : <MessageCircle size={28} />}
+            {!isChatOpen && (
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-rose-500 border-2 border-white rounded-full"></span>
+            )}
+          </button>
+        </div>
+      </div>
+
+      {/* THANH LIÊN HỆ ĐÁY MÀN HÌNH (MOBILE) */}
       <div className="md:hidden fixed bottom-0 left-0 w-full bg-white/90 backdrop-blur-md border-t border-slate-200 p-3 z-[40] shadow-[0_-10px_20px_rgba(0,0,0,0.05)]">
         <div className="flex gap-3">
           <a
@@ -767,7 +864,7 @@ export default function Profile() {
         </div>
       </div>
 
-      {/* MODAL 1: HIỂN THỊ CHI TIẾT DỊCH VỤ */}
+      {/* MODAL 1: CHI TIẾT DỊCH VỤ */}
       {selectedService && (
         <div
           className="fixed inset-0 z-[100] bg-slate-900/80 backdrop-blur-sm flex flex-col items-center justify-center p-4 animate-in fade-in duration-200"
@@ -837,7 +934,7 @@ export default function Profile() {
         </div>
       )}
 
-      {/* MODAL 2: PHÓNG TO ẢNH TÀI LIỆU */}
+      {/* MODAL 2: ẢNH TÀI LIỆU */}
       {viewingImage && (
         <div
           className="fixed inset-0 z-[100] bg-slate-900/95 backdrop-blur-md flex flex-col items-center justify-center p-4 animate-in fade-in duration-200"
@@ -862,17 +959,11 @@ export default function Profile() {
         </div>
       )}
 
-      {/* CSS Ẩn thanh cuộn */}
       <style
         dangerouslySetInnerHTML={{
           __html: `
-        .hide-scrollbar::-webkit-scrollbar {
-          display: none;
-        }
-        .hide-scrollbar {
-          -ms-overflow-style: none;
-          scrollbar-width: none;
-        }
+        .hide-scrollbar::-webkit-scrollbar { display: none; }
+        .hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
       `,
         }}
       />
