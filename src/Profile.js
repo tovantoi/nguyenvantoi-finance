@@ -31,6 +31,7 @@ import {
   Send,
   Bot,
   Loader2,
+  Paperclip,
 } from "lucide-react";
 
 export default function Profile() {
@@ -56,7 +57,7 @@ export default function Profile() {
   const sliderRef = useRef(null);
   const chatEndRef = useRef(null);
 
-  // --- CÁC STATE CỦA CHATBOT ---
+  // --- STATE CHATBOT ---
   const [isChatOpen, setIsChatOpen] = useState(false);
   const [inputText, setInputText] = useState("");
   const [isTyping, setIsTyping] = useState(false);
@@ -67,6 +68,24 @@ export default function Profile() {
     },
   ]);
 
+  // BỔ SUNG 3 DÒNG NÀY CHO TÍNH NĂNG ẢNH
+  const fileInputRef = useRef(null);
+  const [selectedFile, setSelectedFile] = useState(null);
+  const [previewUrl, setPreviewUrl] = useState(null);
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedFile(file);
+      setPreviewUrl(URL.createObjectURL(file));
+    }
+  };
+
+  const removeImage = () => {
+    setSelectedFile(null);
+    setPreviewUrl(null);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
   // Xử lý hiện/ẩn nút Lên đầu trang
   useEffect(() => {
     const handleScroll = () => {
@@ -103,20 +122,35 @@ export default function Profile() {
   // --- HÀM XỬ LÝ GỬI TIN NHẮN CHATBOT ---
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!inputText.trim()) return;
+    // Nếu không gõ chữ và cũng không chọn ảnh thì không làm gì cả
+    if (!inputText.trim() && !selectedFile) return;
 
     const userMsg = inputText.trim();
-    // 1. Hiển thị tin nhắn của người dùng lên UI
-    setChatMessages((prev) => [...prev, { role: "user", text: userMsg }]);
+    // Tạo câu thông báo hiển thị lên màn hình chat
+    const displayMsg = selectedFile
+      ? userMsg
+        ? `${userMsg} [Đã đính kèm ảnh]`
+        : "[Đã đính kèm ảnh]"
+      : userMsg;
+
+    setChatMessages((prev) => [...prev, { role: "user", text: displayMsg }]);
     setInputText("");
     setIsTyping(true);
 
     try {
-      // 2. Gửi request xuống API Flask Backend
       const formData = new FormData();
       formData.append("message", userMsg);
-      formData.append("user_id", "1"); // Truyền ID ảo cho người dùng vãng lai
+      formData.append("user_id", "1");
 
+      // NẾU CÓ ẢNH THÌ GÓI THÊM VÀO FORMDATA
+      if (selectedFile) {
+        formData.append("image", selectedFile);
+      }
+
+      // Xóa ảnh ở khung preview sau khi bấm gửi
+      removeImage();
+
+      // NHỚ SỬA LẠI LINK ONRENDER CỦA BẠN VÀO ĐÂY NHÉ
       const response = await fetch(
         "https://chatbot-fe-vantoi.onrender.com/api/chat",
         {
@@ -126,8 +160,6 @@ export default function Profile() {
       );
 
       const data = await response.json();
-
-      // 3. Nhận phản hồi và hiển thị tin nhắn của Bot
       setChatMessages((prev) => [...prev, { role: "bot", text: data.reply }]);
     } catch (error) {
       console.error("Chat Error:", error);
@@ -135,7 +167,7 @@ export default function Profile() {
         ...prev,
         {
           role: "bot",
-          text: "Hệ thống đang bận hoặc mất kết nối. Vui lòng liên hệ trực tiếp Zalo 0359272229 nhé!",
+          text: "Hệ thống đang bận. Vui lòng liên hệ Zalo 0359272229 nhé!",
         },
       ]);
     } finally {
@@ -803,23 +835,66 @@ export default function Profile() {
             <div ref={chatEndRef} />
           </div>
 
+          {/* KHU VỰC PREVIEW ẢNH (CHỈ HIỆN KHI CHỌN ẢNH) */}
+          {previewUrl && (
+            <div className="px-3 pt-2 bg-white flex items-center relative">
+              <div className="relative inline-block border border-emerald-200 rounded-lg p-1">
+                <img
+                  src={previewUrl}
+                  alt="Preview"
+                  className="h-14 w-auto rounded object-cover"
+                />
+                <button
+                  type="button"
+                  onClick={removeImage}
+                  className="absolute -top-2 -right-2 bg-rose-500 text-white rounded-full p-0.5 shadow-md hover:bg-rose-600"
+                >
+                  <X size={14} />
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* KHUNG NHẬP CHỮ & NÚT GỬI */}
           <form
             onSubmit={handleSendMessage}
-            className="p-3 bg-white border-t border-slate-100 flex gap-2"
+            className="p-3 bg-white border-t border-slate-100 flex gap-2 items-center"
           >
+            {/* Input file ẩn đi */}
+            <input
+              type="file"
+              accept="image/*"
+              className="hidden"
+              ref={fileInputRef}
+              onChange={handleFileChange}
+            />
+
+            {/* Nút bấm gọi Input file */}
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="p-2 text-slate-400 hover:text-emerald-500 transition-colors shrink-0"
+              title="Đính kèm ảnh"
+            >
+              <Paperclip size={20} />
+            </button>
+
             <input
               type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
-              placeholder="Hỏi AI về lãi suất, hạn mức..."
+              placeholder="Hỏi AI hoặc tải ảnh..."
               className="flex-1 bg-slate-100 rounded-xl px-4 py-2 text-sm outline-none focus:ring-2 focus:ring-emerald-500/50"
             />
             <button
               type="submit"
               disabled={isTyping}
-              className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors disabled:opacity-50"
+              className="bg-emerald-500 hover:bg-emerald-600 text-white w-10 h-10 rounded-xl flex items-center justify-center transition-colors disabled:opacity-50 shrink-0"
             >
-              <Send size={18} className={inputText.trim() ? "ml-1" : ""} />
+              <Send
+                size={18}
+                className={inputText.trim() || selectedFile ? "ml-1" : ""}
+              />
             </button>
           </form>
         </div>
